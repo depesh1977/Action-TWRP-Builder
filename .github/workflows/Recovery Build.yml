@@ -14,15 +14,15 @@ on:
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/depesh1977/android_device_bqru_BQ_8088L'
+        default: 'https://github.com/depesh1977/Realme'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
-        default: 'android'
+        default: 'android-11'
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: 'device/bqru/BQ_8088L'
+        default: 'device/realme/RMX3231'
       COMMON_TREE_URL:
         description: 'COMMON_TREE_URL (if no common tree, leave blank)'
         required: false
@@ -32,11 +32,11 @@ on:
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'BQ_8088L'
+        default: 'RMX3231'
       MAKEFILE_NAME:
         description: 'MAKEFILE_NAME'
         required: true
-        default: 'twrp_BQ_8088L'
+        default: 'twrp_RMX3231'
       BUILD_TARGET:
         description: 'BUILD_TARGET'
         required: true
