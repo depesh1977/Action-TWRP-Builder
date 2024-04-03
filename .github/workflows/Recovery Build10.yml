@@ -10,7 +10,7 @@ on:
       MANIFEST_BRANCH:
         description: 'MANIFEST_BRANCH'
         required: true
-        default: 'twrp-10.0_deprecated'
+        default: 'twrp-10.0-deprecated'
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
