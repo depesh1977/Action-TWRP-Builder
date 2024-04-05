@@ -14,7 +14,7 @@ on:
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/depesh1977/Realme'
+        default: 'https://github.com/depesh1977/Realme-C21Y-RMX3261'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
@@ -32,11 +32,11 @@ on:
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'RMX3231'
+        default: 'RMX3261'
       MAKEFILE_NAME:
         description: 'MAKEFILE_NAME'
         required: true
-        default: 'twrp_RMX3231'
+        default: 'twrp_RMX3261'
       BUILD_TARGET:
         description: 'BUILD_TARGET'
         required: true
