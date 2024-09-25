@@ -4,48 +4,87 @@ on:
   workflow_dispatch:
     inputs:
       MANIFEST_URL:
-        description: 'MANIFEST_URL (if want to use SSH keys, use git@github.com:XXXXX)'
+        description: 'MANIFEST_URL (if using SSH keys, use git@github.com:repo URL format)'
         required: true
-        default: '	https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni.git'
+        default: ''
+        type: choice
+        options:
+        - https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git
+        - https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni.git
+        - https://github.com/PitchBlackRecoveryProject/manifest_pb.git
+        - https://gitlab.com/OrangeFox/bootable/Recovery.git
+        - https://github.com/SHRP/manifest.git
       MANIFEST_BRANCH:
         description: 'MANIFEST_BRANCH'
         required: true
-        default: 'twrp-10.0-deprecated'
+        default: ''
+        type: choice
+        options:
+        - twrp-12.1
+        - twrp-11
+        - twrp-10.0-deprecated
+        - twrp-8.1
+        - android-12.1
+        - android-11.0
+        - android-10.0
+        - fox_12.1
+        - fox_11.0
+        - fox_10.0
+        - shrp-12.1
+        - v3_11.0
+        - v3_10.0
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/depesh1977/test_l6006'
+        default: 'https://github.com/depesh1977/android_device_vivo_Y81'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
-        default: 'android-11'
+        default: 'android-12.1'
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: 'device/itel/L6006'
-      COMMON_TREE_URL:
-        description: 'COMMON_TREE_URL (if no common tree, leave blank)'
-        required: false
-      COMMON_PATH:
-        description: 'COMMON_PATH (if no common tree, leave blank)'
-        required: false
+        default: 'device/vivo/PD1732F_EX'
+#      COMMON_TREE_URL:
+#        description: 'COMMON_TREE_URL (if no common tree, leave blank)'
+#        required: false
+#      COMMON_PATH:
+#        description: 'COMMON_PATH (if no common tree, leave blank)'
+#        required: false
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'L6006'
+        default: 'PD1732F_EX'
       MAKEFILE_NAME:
-        description: 'MAKEFILE_NAME'
+        description: 'MAKEFILE_NAME (you need to know the correct branch to use coming from each Organization)'
         required: true
-        default: 'omni_L6006'
+        default: 'twrp'
+        type: choice
+        options:
+        - twrp
+        - omni
       BUILD_TARGET:
         description: 'BUILD_TARGET'
         required: true
-        default: 'recovery'
+        default: ''
+        type: choice
+        options:
+        - boot
+        - recovery
+        - vendorboot
+      BUILD_VENDORBOOT:
+        description: 'BUILD_VENDORBOOT'
+        required: false
+        default: ''
+        type: choice
+        options:
+        - 
+        - vendor_boot
 
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     permissions:
       contents: write
     steps:
@@ -74,8 +113,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt -y upgrade
-        sudo apt -y install gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libncurses5 python3
-
+        sudo apt -y install gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libncurses5 python
     - name: Install OpenJDK
       uses: actions/setup-java@v3
       with:
@@ -83,15 +121,11 @@ jobs:
         java-version: '8'
 
     - name: Setup SSH Keys
-      if: ${{ startsWith(github.event.inputs.MANIFEST_URL, 'git@github.com') || 
-          startsWith(github.event.inputs.DEVICE_TREE_URL, 'git@github.com') ||
-          startsWith(github.event.inputs.COMMON_TREE_URL, 'git@github.com') }}
+      if: ${{ startsWith(github.event.inputs.MANIFEST_URL, 'git@github.com') }}
       uses: webfactory/ssh-agent@v0.5.4
       with:
           ssh-private-key: |
-            ${{ secrets.SSH_PRIVATE_KEY }}
-
-
+              ${{ secrets.SSH_PRIVATE_KEY }}
     - name: Install repo
       run: |
         mkdir ~/bin
@@ -119,13 +153,13 @@ jobs:
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
-    - name: Clone common tree
-      if: |
-        github.event.inputs.COMMON_TREE_URL != null
-        && github.event.inputs.COMMON_PATH != null
-      run: |
-        git clone ${{ github.event.inputs.COMMON_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.COMMON_PATH }}
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+#    - name: Clone common tree
+#      if: |
+#        github.event.inputs.COMMON_TREE_URL != null
+#        && github.event.inputs.COMMON_PATH != null
+#      run: |
+#        git clone ${{ github.event.inputs.COMMON_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.COMMON_PATH }}
+#      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Check Build Tree
       uses: haya14busa/action-cond@v1
@@ -151,16 +185,15 @@ jobs:
       run: |
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
-        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
+        lunch ${{ github.event.inputs.MAKEFILE_NAME }}_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
-        files: | 
+        files: |
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_TARGET }}.img
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*vendor*.img
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/${{ github.event.inputs.BUILD_VENDORBOOT }}.img
         name: ${{ github.event.inputs.DEVICE_NAME }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
