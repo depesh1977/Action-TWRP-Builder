@@ -23,6 +23,7 @@ on:
         - twrp-12.1
         - twrp-11
         - twrp-10.0-deprecated
+        - twrp-9.0
         - twrp-8.1
         - android-12.1
         - android-11.0
