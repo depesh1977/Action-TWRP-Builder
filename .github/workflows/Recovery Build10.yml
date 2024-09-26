@@ -17,7 +17,7 @@ on:
       MANIFEST_BRANCH:
         description: 'MANIFEST_BRANCH'
         required: true
-        default: ''
+        default: 'main'
         type: choice
         options:
         - twrp-12.1
@@ -43,7 +43,7 @@ on:
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
-        default: 'android-8.1'
+        default: ''
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
