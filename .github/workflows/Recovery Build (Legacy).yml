@@ -97,6 +97,7 @@ jobs:
         sudo ln -sf ~/bin/repo /usr/bin/repo
       
     - name: Initialize repo
+    sed -i '/gflags/d' .repo/manifests/remove-minimal.xml
       run: |
         mkdir workspace
         cd workspace
