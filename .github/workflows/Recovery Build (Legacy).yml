@@ -45,7 +45,7 @@ on:
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     permissions:
       contents: write
     steps:
@@ -105,7 +105,8 @@ jobs:
         git config --global user.email "axenov.gosha@yandex.ru"
         repo init --depth=1 -u ${{ github.event.inputs.MANIFEST_URL }} -b ${{ github.event.inputs.MANIFEST_BRANCH }}
         sed -i 's/android_system_core/android_system_core_old/' .repo/manifests/omni-aosp.xml ;
-        sed -i 's/android_frameworks_base/android_frameworks_base_old/' .repo/manifests/omni-aosp.xml ; 
+        sed -i 's/android_frameworks_base/android_frameworks_base_old/' .repo/manifests/omni-aosp.xml ;
+        sed -i 's/android_frameworks_base/android_frameworks_base_old/g' .repo/manifests/remove-minimal.xml
       id: pwd
     
     - name: Repo Sync
@@ -138,12 +139,12 @@ jobs:
       with:
         swap-size-gb: 12
 
-    - name: Switch to Python3
+    - name: Switch to Python2
       run: |
         sudo apt -y install python
         sudo rm -rf /usr/bin/python
-        #sudo ln -s /usr/bin/python2 /usr/bin/python
-        sudo ln -s /usr/bin/python3 /usr/bin/python3
+        sudo ln -s /usr/bin/python2 /usr/bin/python
+        #sudo ln -s /usr/bin/python3 /usr/bin/python3
       continue-on-error: true
 
     - name: Building recovery
