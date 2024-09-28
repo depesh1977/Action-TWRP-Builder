@@ -45,7 +45,7 @@ on:
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
     steps:
@@ -138,12 +138,12 @@ jobs:
       with:
         swap-size-gb: 12
 
-    - name: Switch to Python2
+    - name: Switch to Python3
       run: |
         sudo apt -y install python
         sudo rm -rf /usr/bin/python
-        sudo ln -s /usr/bin/python2 /usr/bin/python
-        # sudo ln -s /usr/bin/python3 /usr/bin/python3
+        #sudo ln -s /usr/bin/python2 /usr/bin/python
+        sudo ln -s /usr/bin/python3 /usr/bin/python3
       continue-on-error: true
 
     - name: Building recovery
