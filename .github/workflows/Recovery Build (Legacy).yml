@@ -104,7 +104,7 @@ jobs:
         git config --global user.name "depesh1977"
         git config --global user.email "axenov.gosha@yandex.ru"
         repo init --depth=1 -u ${{ github.event.inputs.MANIFEST_URL }} -b ${{ github.event.inputs.MANIFEST_BRANCH }}
-        sed -i '/android_frameworks_base/d' .repo/manifests/remove-minimal.xml
+        sed -i '/android_frameworks_base_old/d' .repo/manifests/remove-minimal.xml
         sed -i 's/android_system_core/android_system_core_old/' .repo/manifests/omni-aosp.xml ;
         #sed -i 's/android_frameworks_base/android_frameworks_base_old/' .repo/manifests/omni-aosp.xml ; 
       id: pwd
