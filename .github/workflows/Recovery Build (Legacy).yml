@@ -3,14 +3,17 @@ name: Recovery Build (Legacy)
 on:
   workflow_dispatch:
     inputs:
-      MANIFEST_URL:
-        description: 'MANIFEST_URL (if want to use SSH keys, use git@github.com:XXXXX)'
-        required: true
-        default: 'https://github.com/PitchBlackRecoveryProject/manifest_pb.git'
       MANIFEST_BRANCH:
-        description: 'MANIFEST_BRANCH'
+        description: 'Manifest Branch'
         required: true
-        default: 'twrp-8.1'
+        default: ''
+        type: choice
+        options:
+        - android-12.1
+        - android-11.0
+        - android-10.0
+        - android-9.0
+        - android-8.1
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
@@ -103,7 +106,7 @@ jobs:
         echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
         git config --global user.name "depesh1977"
         git config --global user.email "axenov.gosha@yandex.ru"
-        repo init --depth=1 -u ${{ github.event.inputs.MANIFEST_URL }} -b ${{ github.event.inputs.MANIFEST_BRANCH }}
+        repo init --depth=1 -u https://github.com/PitchBlackRecoveryProject/manifest_pb.git -b ${{ github.event.inputs.MANIFEST_BRANCH }}
         sed -i 's/android_system_core/android_system_core_old/' .repo/manifests/omni-aosp.xml ;
         sed -i 's/android_frameworks_base/android_frameworks_base_old/' .repo/manifests/omni-aosp.xml ;
         sed -i 's/android_frameworks_base/android_frameworks_base_old/g' .repo/manifests/remove-minimal.xml ;
