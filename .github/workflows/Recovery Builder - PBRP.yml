@@ -33,7 +33,7 @@ on:
       MAKEFILE_NAME:
         description: 'MAKEFILE_NAME'
         required: true
-        default: 'omni_PD1732F_EX'
+        default: 'pb_PD1732F_EX'
       BUILD_TARGET:
         description: 'Specify your Build Target' # Pick among boot, recovery and vendor_boot
         required: true
