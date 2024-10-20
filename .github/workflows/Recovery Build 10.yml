@@ -39,10 +39,6 @@ on:
         - boot
         - recovery
         - vendorboot
-      LDCHECK:
-        description: 'Path of blobs to check' # Use it know what kind of dependencies your missing for decryption blobs.
-        required: true
-        default: ''
 
 jobs:
   build:
