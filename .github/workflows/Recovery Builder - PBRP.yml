@@ -20,7 +20,7 @@ on:
       DEVICE_TREE:
         description: 'Custom Recovery Tree' # Your already made Device Tree for TWRP
         required: true
-        default: 'https://github.com/depesh1977/android_device_vivo_Y81_twrp/tree/android-8.1'
+        default: 'https://github.com/depesh1977/android_device_vivo_Y81_twrp/tree/android-8.1.git'
       DEVICE_TREE_BRANCH:
         description: 'Your Custom Recovery Tree Branch' # Your Device Tree Branch, make sure it's right.
         required: true
