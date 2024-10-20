@@ -9,6 +9,7 @@ on:
         default: ''
         type: choice
         options:
+        - android-14.0
         - android-12.1
         - android-11.0
         - android-10.0
@@ -19,21 +20,29 @@ on:
       DEVICE_TREE:
         description: 'Custom Recovery Tree' # Your already made Device Tree for TWRP
         required: true
-        default: 'https://github.com/depesh1977/android_device_vivo_Y81_twrp'
+        default: 'https://github.com/depesh1977/android_device_vivo_Y81_twrp/tree/android-8.1'
       DEVICE_TREE_BRANCH:
-        description: 'Custom Recovery Tree Branch' # Your Device Tree Branch, make sure it's right.
+        description: 'Your Custom Recovery Tree Branch' # Your Device Tree Branch, make sure it's right.
         required: true
         default: 'android-8.1'
-      BUILD_TARGET:
-        description: 'Specify your Build Target' # Pick among boot, recovery and vendor_boot
+      DEVICE_NAME:
+        description: 'Specify your Device Codename' # As is, just like your PRODUCT_DEVICE in your device tree.
         required: true
-        default: ''
+        default: 'PD1732F_EX'
+      DEVICE_PATH:
+        description: 'Specify your Device Path (Check the DEVICE_PATH in BoardConfig.mk)' # As is, just like your DEVICE_PATH in your BoardConfig.mk
+        required: true
+        default: 'device/vivo/PD1732F_EX'
+      BUILD_TARGET:
+        description: 'Specify your Build Target (choose "pbrp" instead of "recovery" for Android 11 or above)' # Pick among boot, recovery and vendor_boot
+        required: true
+        default: 'recovery'
         type: choice
         options:
         - pbrp
-        - bootimage
-        - recoveryimage
-        - vendorbootimage
+        - boot
+        - recovery
+        - vendorboot
       LDCHECK:
         description: 'Use LDCHECK'
         required: false
