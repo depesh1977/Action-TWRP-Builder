@@ -30,6 +30,10 @@ on:
         description: 'Specify your Device Codename' # As is, just like your PRODUCT_DEVICE in your device tree.
         required: true
         default: 'PD1732F_EX'
+      MAKEFILE_NAME:
+        description: 'MAKEFILE_NAME'
+        required: true
+        default: 'omni_PD1732F_EX'
       BUILD_TARGET:
         description: 'Specify your Build Target' # Pick among boot, recovery and vendor_boot
         required: true
@@ -37,7 +41,7 @@ on:
         type: choice
         options:
         - boot
-        - recoveryimage
+        - recovery
         - vendorboot
 
 jobs:
