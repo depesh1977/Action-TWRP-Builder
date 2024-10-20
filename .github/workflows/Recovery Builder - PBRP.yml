@@ -42,6 +42,7 @@ on:
         options:
         - boot
         - recovery
+        - recoveryimage
         - vendorboot
 
 jobs:
