@@ -32,7 +32,7 @@ on:
       DEVICE_TREE_BRANCH:
         description: 'Custom Recovery Tree Branch' # Your Device Tree Branch, make sure it's right.
         required: true
-        default: 'Android-8.1'
+        default: 'android-8.1'
       DEVICE_PATH:
         description: 'Specify your Device Path' # As is, just like your DEVICE_PATH in your BoardConfig.mk
         required: true
@@ -57,7 +57,7 @@ on:
       FILE_TO_CHECK:
         description: 'Specify which libs to check' # Use it know what kind of dependencies your missing for decryption.
         required: false
-        default: 'system/bin/qseecomd'
+        default: ''
 
 jobs:
   build:
