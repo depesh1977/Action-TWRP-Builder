@@ -20,7 +20,7 @@ on:
       MANIFEST_BRANCH:
         description: 'Manifest Branch'
         required: true
-        default: 'android-9.0'
+        default: 'android-8.1'
 #        type: choice
 #        options:
 #        - android-12.1
