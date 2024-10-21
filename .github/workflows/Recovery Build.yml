@@ -128,6 +128,7 @@ jobs:
       run: |
         cd ${GITHUB_WORKSPACE}/workspace
         export ALLOW_MISSING_DEPENDENCIES=true
+        sed -i 's/GENERIC_KERNEL_CMDLINE += twrpfastboot=1/#GENERIC_KERNEL_CMDLINE += twrpfastboot=1/' vendor/twrp/config/BoardConfigTWRP.mk
         source build/envsetup.sh
         lunch ${{ steps.manifesttype.outputs.value }}_${{ github.event.inputs.DEVICE_NAME }}-eng
         rm -rf .repo/
