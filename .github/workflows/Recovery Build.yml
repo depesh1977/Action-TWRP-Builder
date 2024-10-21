@@ -171,7 +171,7 @@ sed -i '/BOARD_USES_RECOVERY_AS_BOOT/a\  ifneq ($(TW_NO_FASTBOOT_BOOT),true)' ve
 sed -i 's/^endif/  endif/' vendor/twrp/config/BoardConfigTWRP.mk ;
 sed -i '$ i\endif' vendor/twrp/config/BoardConfigTWRP.mk ;
         source build/envsetup.sh
-        export ALLOW_MISSING_DEPENDENCIES=true
+export ALLOW_MISSING_DEPENDENCIES=true
         lunch ${{ steps.buildtree.outputs.value }}_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.wsdir }}
 
