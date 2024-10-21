@@ -40,7 +40,7 @@ on:
       BUILD_TARGET:
         description: 'Specify your Build Target (choose "pbrp" instead of "recovery" for Android 11 or above)' # Pick among boot, recovery and vendor_boot
         required: true
-        default: 'recovery'
+        default: 'pbrp'
         type: choice
         options:
         - pbrp
@@ -49,13 +49,13 @@ on:
         - vendorboot
       LDCHECK:
         description: 'Use LDCHECK'
-        required: false
+        required: true
         default: 'false'
         type: boolean
       LDCHECKPATH:
         description: 'Path of blobs to check' # Use it know what kind of dependencies your missing for decryption blobs.
-        required: false
-        default: 'false'
+        required: true
+        default: 'vendor/bin/mcDriverDaemon'
 
 jobs:
   build:
