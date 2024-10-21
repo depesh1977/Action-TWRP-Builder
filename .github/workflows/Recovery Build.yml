@@ -40,6 +40,14 @@ on:
         - recovery
         - boot
         - vendorboot
+      APPLYPATCH:
+        description: 'Apply diff.patch (true or false)'
+        required: true
+        default: ''
+        type: choice
+        options:
+        - yes
+        - no
       UPLOAD:
         description: 'Upload to Telegram Bot (true or false)'
         required: true
@@ -128,7 +136,7 @@ jobs:
       run: |
         cd ${GITHUB_WORKSPACE}/workspace
         export ALLOW_MISSING_DEPENDENCIES=true
-        sed -i 's/GENERIC_KERNEL_CMDLINE += twrpfastboot=1/#GENERIC_KERNEL_CMDLINE += twrpfastboot=1/' vendor/twrp/config/BoardConfigTWRP.mk
+        sed ls -a vendor/twrp/config ; -i 's/GENERIC_KERNEL_CMDLINE += twrpfastboot=1/#GENERIC_KERNEL_CMDLINE += twrpfastboot=1/' vendor/twrp/config/BoardConfigTWRP.mk
         source build/envsetup.sh
         lunch ${{ steps.manifesttype.outputs.value }}_${{ github.event.inputs.DEVICE_NAME }}-eng
         rm -rf .repo/
