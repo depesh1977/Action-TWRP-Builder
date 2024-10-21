@@ -114,6 +114,11 @@ jobs:
         repo sync -j$(nproc --all)
         ls -al
 
+    - name: Repopick Patches
+      run: |
+        source build/envsetup.sh
+        repopick 6123 && repopick 6126 ;
+
     - name: Clone Device Tree
       run: |
         cd ${GITHUB_WORKSPACE}/workspace
@@ -135,11 +140,8 @@ jobs:
     - name: Building recovery
       run: |
         cd ${GITHUB_WORKSPACE}/workspace
-        export ALLOW_MISSING_DEPENDENCIES=true
-        sed -i 's/ GENERIC_KERNEL_CMDLINE += twrpfastboot=1/ #GENERIC_KERNEL_CMDLINE += twrpfastboot=1/' vendor/twrp/BoardConfigTWRP.mk ;
-        ls -a vendor/twrp ;
-        ls -a vendor/twrp/config ;
         source build/envsetup.sh
+        export ALLOW_MISSING_DEPENDENCIES=true
         lunch ${{ steps.manifesttype.outputs.value }}_${{ github.event.inputs.DEVICE_NAME }}-eng
         rm -rf .repo/
         make clean
