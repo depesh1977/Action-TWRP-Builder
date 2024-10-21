@@ -1,24 +1,21 @@
-name: Recovery Build
+name: TWRP Build patches
 
 on:
   workflow_dispatch:
     inputs:
-      MANIFEST_URL:
-        description: 'MANIFEST_URL'
-        required: true
-        default: 'https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git'
-      LIBRARY_BRANCH:
-        description: 'LIBRARY_BRANCH'
+      MANIFEST_BRANCH:
+        description: 'MANIFEST_BRANCH'
         required: true
         default: 'twrp-11'
         type: choice
         options:
-        - twrp-11
         - twrp-12.1
+        - twrp-11
+        - twrp-9.0
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/depesh1977/android_device_doogee_X96.git'
+        default: 'https://github.com/depesh1977/Realme'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
@@ -26,13 +23,13 @@ on:
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: 'device/doogee/X96'
+        default: 'device/realme/RMX3231'
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'X96'
-      DEVICE_TYPE:
-        description: 'DEVICE_TYPE'
+        default: 'RMX3231'
+      BUILD_TARGET:
+        description: 'BUILD_TARGET'
         required: true
         default: 'boot'
         type: choice
@@ -43,7 +40,7 @@ on:
       APPLYPATCH:
         description: 'Apply diff.patch (true or false)'
         required: true
-        default: ''
+        default: 'yes'
         type: choice
         options:
         - yes
@@ -67,11 +64,11 @@ on:
 
 jobs:
   build:
+    name: Build TWRP by ${{ github.actor }}
     if: github.event.repository.owner.id == github.event.sender.id
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     permissions:
       contents: write
-
     steps:
     - name: Check Out
       uses: actions/checkout@v4
@@ -83,7 +80,10 @@ jobs:
       run: |
         sudo apt update
         sudo apt -y upgrade
-        sudo apt -y install gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libncurses5 python3
+        sudo apt -y install gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev \
+          x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev \
+          lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool \
+          squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libncurses5 python
 
     - name: Install OpenJDK
       uses: actions/setup-java@v3
@@ -91,72 +91,102 @@ jobs:
         distribution: 'zulu'
         java-version: '8'
 
+    - name: Install Python 2
+      if: github.event.inputs.MANIFEST_BRANCH != 'twrp-11' && github.event.inputs.MANIFEST_BRANCH != 'twrp-12.1'
+      run: |
+        sudo apt -y install python2
+        cd /usr/bin
+        sudo ln -sf python2 python
+
+    - name: Switch to Python3
+      if: github.event.inputs.MANIFEST_BRANCH == 'twrp-11' || github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1'
+      run: |
+        sudo rm -rf /usr/bin/python
+        sudo ln -s /usr/bin/python3 /usr/bin/python
+      continue-on-error: true
+
+    - name: Check Manifest Branch
+      uses: haya14busa/action-cond@v1
+      id: manifest
+      with:
+        cond: ${{ github.event.inputs.MANIFEST_BRANCH == 'twrp-11' || github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1' }}
+        if_true: https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git
+        if_false: https://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni.git
+
     - name: Install repo
       run: |
         mkdir ~/bin
         curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
         chmod a+x ~/bin/repo
         sudo ln -sf ~/bin/repo /usr/bin/repo
-
-    - name: Init Repo
+      
+    - name: Initialize repo
       run: |
-        export HOME=${GITHUB_WORKSPACE}
-        cd ${GITHUB_WORKSPACE}
-        mkdir ${GITHUB_WORKSPACE}/workspace
-        cd ${GITHUB_WORKSPACE}/workspace
+        mkdir twrp
+        cd twrp
+        echo "wsdir=$(pwd)" >> $GITHUB_OUTPUT
         git config --global user.name "depesh1977"
         git config --global user.email "axenov.gosha@yandex.ru"
-        repo init --depth=1 -u ${{ github.event.inputs.MANIFEST_URL }} -b ${{ github.event.inputs.LIBRARY_BRANCH }}
+        repo init --depth=1 -u ${{ steps.manifest.outputs.value }} -b ${{ github.event.inputs.MANIFEST_BRANCH }}
+      id: pwd
 
     - name: Repo Sync
       run: |
-        cd ${GITHUB_WORKSPACE}/workspace
-        repo sync -j$(nproc --all)
-        ls -al
+        repo sync -j$(nproc --all) --force-sync
+      working-directory: ${{ steps.pwd.outputs.wsdir }}
 
     - name: Repopick Patches
       run: |
         source build/envsetup.sh
         repopick 6123 && repopick 6126 ;
+      working-directory: ${{ steps.pwd.outputs.wsdir }}
 
-    - name: Clone Device Tree
+    - name: Clone device tree
       run: |
-        cd ${GITHUB_WORKSPACE}/workspace
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
+      working-directory: ${{ steps.pwd.outputs.wsdir }}
+
+    - name: Apply custom diff.patch
+      if: github.event.inputs.APPLYPATCH == 'true'
+      run: |
+        if [ -d "${{ github.event.inputs.DEVICE_PATH }}/patches" ]; then
+          . ${{ github.event.inputs.DEVICE_PATH }}/patches/apply-patches.sh
+        else
+          echo "Folder /patches not found"
+        fi
+      working-directory: ${{ steps.pwd.outputs.wsdir }}
+      continue-on-error: true
+
+    - name: Check Build Tree
+      uses: haya14busa/action-cond@v1
+      id: buildtree
+      with:
+        cond: ${{ github.event.inputs.MANIFEST_BRANCH == 'twrp-11' || github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1' }}
+        if_true: twrp
+        if_false: omni
 
     - name: Set Swap Space
       uses: pierotofy/set-swap-space@master
       with:
         swap-size-gb: 12
 
-    - name: Check Build Tree
-      uses: haya14busa/action-cond@v1
-      id: manifesttype
-      with:
-        cond: ${{ github.event.inputs.LIBRARY_BRANCH == 'twrp-11' || github.event.inputs.LIBRARY_BRANCH == 'twrp-12.1' }}
-        if_true: twrp
-        if_false: omni
-
     - name: Building recovery
       run: |
-        cd ${GITHUB_WORKSPACE}/workspace
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
-        lunch ${{ steps.manifesttype.outputs.value }}_${{ github.event.inputs.DEVICE_NAME }}-eng
-        rm -rf .repo/
-        make clean
-        make ${{ github.event.inputs.DEVICE_TYPE }}image -j$(nproc --all)
+        lunch ${{ steps.buildtree.outputs.value }}_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
+      working-directory: ${{ steps.pwd.outputs.wsdir }}
 
     - name: Set Variables
       run: |
         echo "date=$(TZ=Australia/Sydney date +%Y%m%d-%H%M)" >> $GITHUB_OUTPUT
-        echo "Outdir=${GITHUB_WORKSPACE}/workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}" >> $GITHUB_OUTPUT
+        echo "Outdir=${GITHUB_WORKSPACE}/twrp/out/target/product/${{ github.event.inputs.DEVICE_NAME }}" >> $GITHUB_OUTPUT
       id: var
 
     - name: Add Img to Zip
       run: |
         cd ${{ steps.var.outputs.Outdir }}
-        zip -9 twrp-${{ github.event.inputs.DEVICE_NAME }}-${{ steps.var.outputs.date }}.zip ${{ github.event.inputs.DEVICE_TYPE }}.img
+        zip -9 twrp-${{ github.event.inputs.DEVICE_NAME }}-${{ steps.var.outputs.date }}.zip ${{ github.event.inputs.BUILD_TARGET }}.img
         echo "name=$(find * -name *.zip -type f)" >> $GITHUB_OUTPUT
       id: zipname
 
@@ -178,10 +208,10 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: ${{ steps.var.outputs.Outdir }}/${{ steps.zipname.outputs.name }}
-        name: ${{ steps.zipname.outputs.name }}-${{ github.run_id }}
+        name: Unofficial TWRP for ${{ github.event.inputs.DEVICE_NAME }} - Build ${{ steps.var.outputs.date }}
         tag_name: ${{ github.run_id }}
         body: |
-          Manifest: ${{ github.event.inputs.LIBRARY_BRANCH }}
+          Manifest: ${{ github.event.inputs.MANIFEST_BRANCH }}
           Device: ${{ github.event.inputs.DEVICE_NAME }}
       env:
         GITHUB_TOKEN: ${{ secrets.axe }}
