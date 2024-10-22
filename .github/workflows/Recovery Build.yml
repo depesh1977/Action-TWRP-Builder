@@ -158,6 +158,7 @@ jobs:
 
     - name: Building recovery
       run: |
+       sed -i '/^ifeq/,$d' vendor/twrp/config/BoardConfigTWRP.mk
        source build/envsetup.sh
        export ALLOW_MISSING_DEPENDENCIES=true
         lunch ${{ steps.buildtree.outputs.value }}_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
