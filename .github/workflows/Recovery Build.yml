@@ -45,14 +45,6 @@ on:
         options:
         - yes
         - no
-      UPLOAD:
-        description: 'Upload to Telegram Bot (true or false)'
-        required: true
-        default: 'no'
-        type: choice
-        options:
-        - yes
-        - no
       PUBLISH:
         description: 'Publish to GitHub (true or false)'
         required: true
@@ -177,7 +169,7 @@ jobs:
 
     - name: Set Variables
       run: |
-        echo "date=$(TZ=Australia/Sydney date +%Y%m%d-%H%M)" >> $GITHUB_OUTPUT
+        echo "date=$(TZ=Europe/Moscow date +%Y%m%d-%H%M)" >> $GITHUB_OUTPUT
         echo "Outdir=${GITHUB_WORKSPACE}/twrp/out/target/product/${{ github.event.inputs.DEVICE_NAME }}" >> $GITHUB_OUTPUT
       id: var
 
@@ -187,19 +179,6 @@ jobs:
         zip -9 twrp-${{ github.event.inputs.DEVICE_NAME }}-${{ steps.var.outputs.date }}.zip ${{ github.event.inputs.BUILD_TARGET }}.img
         echo "name=$(find * -name *.zip -type f)" >> $GITHUB_OUTPUT
       id: zipname
-
-    - name: Upload to Telegram Bot
-      if: github.event.inputs.UPLOAD == 'true'
-      env:
-        CHAT_ID: ${{ secrets.TELEGRAM_TO }}
-        BOT_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-      run: |
-        curl https://api.telegram.org/bot$BOT_TOKEN/sendDocument \
-        -F chat_id=$CHAT_ID \
-        -F disable_notification=true \
-        -F parse_mode=HTML \
-        -F caption=" <b>- Build for <i>${{ github.event.inputs.DEVICE_NAME }}</i> completed.</b> " \
-        -F document=@${{ steps.var.outputs.Outdir }}/${{ steps.zipname.outputs.name }}
 
     - name: Publish to GitHub
       if: github.event.inputs.PUBLISH == 'true'
