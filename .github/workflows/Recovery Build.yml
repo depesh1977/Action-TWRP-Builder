@@ -15,7 +15,7 @@ on:
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/depesh1977/android_device_doogee_X96'
+        default: 'https://github.com/depesh1977/android_device_hxy_BISON'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
@@ -23,11 +23,11 @@ on:
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: 'device/doogee/X96'
+        default: 'device/hxy/BISON'
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'X96'
+        default: 'BISON'
       MAKEFILE_NAME:
         description: 'MAKEFILE_NAME (you need to know the correct branch to use coming from each Organization)'
         required: true
