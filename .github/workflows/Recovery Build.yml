@@ -15,7 +15,7 @@ on:
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/depesh1977/Realme'
+        default: 'https://github.com/depesh1977/android_device_doogee_X96'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
@@ -23,11 +23,19 @@ on:
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: 'device/realme/RMX3231'
+        default: 'device/doogee/X96'
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'RMX3231'
+        default: 'X96'
+      MAKEFILE_NAME:
+        description: 'MAKEFILE_NAME (you need to know the correct branch to use coming from each Organization)'
+        required: true
+        default: 'twrp'
+        type: choice
+        options:
+        - twrp
+        - omni
       BUILD_TARGET:
         description: 'BUILD_TARGET'
         required: true
