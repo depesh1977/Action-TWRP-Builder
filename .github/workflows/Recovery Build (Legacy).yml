@@ -104,9 +104,10 @@ jobs:
         git config --global user.name "depesh1977"
         git config --global user.email "axenov.gosha@yandex.ru"
         repo init --depth=1 -u ${{ github.event.inputs.MANIFEST_URL }} -b ${{ github.event.inputs.MANIFEST_BRANCH }}
-        sed -i 's/"android_system_core" remote="omnirom"/"android_system_core_old" remote="omnirom"/' .repo/manifests/omni-aosp.xml .repo/manifests/snippets/omni-aosp.xml ;
-        sed -i 's/"android_frameworks_base"/"android_frameworks_base_old"/' .repo/manifests/remove-minimal.xml ;
-        sed -i 's/"android_frameworks_base" remote="omnirom"/"android_frameworks_base_old" remote="omnirom"/' .repo/manifests/omni-aosp.xml .repo/manifests/twrp-extras.xml .repo/manifests/snippets/omni-aosp.xml ;
+        sed -i 's/android_system_core/android_system_core_old/' .repo/manifests/omni-aosp.xml ;
+        sed -i 's/android_frameworks_base/android_frameworks_base_old/' .repo/manifests/omni-aosp.xml ;
+        sed -i 's/android_frameworks_base/android_frameworks_base_old/g' .repo/manifests/remove-minimal.xml ;
+        sed -i 's/android_frameworks_base/android_frameworks_base_old/' .repo/manifests/twrp-extras.xml ;
       id: pwd
     
     - name: Repo Sync
