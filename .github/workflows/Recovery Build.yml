@@ -141,7 +141,7 @@ jobs:
       working-directory: ${{ steps.pwd.outputs.wsdir }}
 
     - name: Apply custom diff.patch
-      if: github.event.inputs.APPLYPATCH == 'true'
+      if: github.event.inputs.APPLYPATCH == 'false'
       run: |
         if [ -d "${{ github.event.inputs.DEVICE_PATH }}/patches" ]; then
           . ${{ github.event.inputs.DEVICE_PATH }}/patches/apply-patches.sh
