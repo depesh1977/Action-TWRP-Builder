@@ -51,16 +51,16 @@ on:
         default: 'no'
         type: choice
         options:
-        - yes
-        - no
+        - true
+        - false
       PUBLISH:
         description: 'Publish to GitHub (true or false)'
         required: true
         default: 'yes'
         type: choice
         options:
-        - yes
-        - no
+        - true
+        - false
 
 jobs:
   build:
@@ -141,7 +141,7 @@ jobs:
       working-directory: ${{ steps.pwd.outputs.wsdir }}
 
     - name: Apply custom diff.patch
-      if: github.event.inputs.APPLYPATCH == 'false'
+      if: github.event.inputs.APPLYPATCH == 'true'
       run: |
         if [ -d "${{ github.event.inputs.DEVICE_PATH }}/patches" ]; then
           . ${{ github.event.inputs.DEVICE_PATH }}/patches/apply-patches.sh
