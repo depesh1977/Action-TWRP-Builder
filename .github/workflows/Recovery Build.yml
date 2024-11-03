@@ -132,6 +132,7 @@ jobs:
 
     - name: Repo Sync
       run: |
+        sed -i '/^ifeq/,$d' vendor/twrp/config/BoardConfigTWRP.mk
         repo sync -j$(nproc --all) --force-sync
       working-directory: ${{ steps.pwd.outputs.wsdir }}
 
