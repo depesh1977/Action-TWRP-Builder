@@ -15,19 +15,19 @@ on:
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com/depesh1977/android_device_hxy_BISON'
+        default: 'https://github.com/depesh1977/Realme'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
-        default: 'android-11'
+        default: 'test'
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: 'device/hxy/BISON'
+        default: 'device/realme/RMX3231'
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'BISON'
+        default: 'RMX3231'
       MAKEFILE_NAME:
         description: 'MAKEFILE_NAME (you need to know the correct branch to use coming from each Organization)'
         required: true
@@ -39,7 +39,7 @@ on:
       BUILD_TARGET:
         description: 'BUILD_TARGET'
         required: true
-        default: 'recovery'
+        default: 'boot'
         type: choice
         options:
         - recovery
@@ -48,7 +48,7 @@ on:
       APPLYPATCH:
         description: 'Apply diff.patch (true or false)'
         required: true
-        default: 'no'
+        default: 'true'
         type: choice
         options:
         - true
@@ -56,7 +56,7 @@ on:
       PUBLISH:
         description: 'Publish to GitHub (true or false)'
         required: true
-        default: 'yes'
+        default: 'true'
         type: choice
         options:
         - true
